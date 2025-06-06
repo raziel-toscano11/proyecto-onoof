@@ -8,7 +8,7 @@ import modelo.Garantia;
 import modelo.Producto;
 import modelo.Venta;
 
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2025-06-05T15:42:57")
+@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2025-06-06T12:19:11")
 @StaticMetamodel(VentaDetalle.class)
 public class VentaDetalle_ { 
 

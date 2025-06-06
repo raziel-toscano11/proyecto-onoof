@@ -46,4 +46,8 @@ public class MUsuario {
         return usuarioFacade.obtenerUsuario(u.getNombre(), u.getContrasena());
     }
     
+    public Usuario obtenerPorUsuario(String usuario) {
+        return usuarioFacade.obtenerPorUsuario(usuario);
+    }
+    
 }

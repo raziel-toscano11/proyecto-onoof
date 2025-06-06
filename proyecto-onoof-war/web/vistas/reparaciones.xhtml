@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:composition template="/templates/plantilla_principal.xhtml">
+        <ui:define name="contenido">
+            <h:form>
+                <div class="flex justify-between items-center mb-2">
+                    <p:commandButton type="button" value="Crear reparación" />
+                    <span class="ui-input-icon-left">
+                        <i class="pi pi-search" />
+                        <p:inputText placeholder="Buscar reparación" />
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <p:dataTable value="#{reparacionBean.listaReparaciones}" var="r"
+                                 styleClass="min-w-full bg-white"
+                                 rowStyleClass="even:bg-blue-50"
+                                 paginator="true" rows="10">
+
+                        <p:column headerText="Id" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.id}" />
+                        </p:column>
+
+                        <p:column headerText="Anticipo" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.anticipo}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Motivo de Reparación" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.motivoReparacion}" />
+                        </p:column>
+
+                        <p:column headerText="Precio Diagnóstico" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.precioDiagnostico}">
+                                <f:convertNumber pattern="$ #,##0.00" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Detalle" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.detalle}" />
+                        </p:column>
+
+                        <p:column headerText="Fecha Ingreso" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.fechaIngreso}">
+                                <f:convertDateTime pattern="dd MMMM yyyy" locale="es" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Fecha Entrega" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{r.fechaEntrega}">
+                                <f:convertDateTime pattern="dd MMMM yyyy" locale="es" />
+                            </h:outputText>
+                        </p:column>
+
+
+                        <p:column headerText="Estado" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{reparacionBean.getEstadoNombre(r)}" />
+                        </p:column>
+
+
+                        <p:column headerText="Marca" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{reparacionBean.getMarcaNombre(r)}" />
+                        </p:column>
+
+                        <p:column headerText="Modelo" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{reparacionBean.getModeloNombre(r)}" />
+                        </p:column>
+
+                        <p:column headerText="Acciones" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <div class="flex items-center">
+                                <p:commandButton icon="pi pi-pencil" 
+                                                 title="Editar"
+                                                 actionListener="#{reparacionBean.editar(r)}"
+                                                 update="@form" 
+                                                 style="margin-right: .5rem;" />
+                                <p:commandButton type="button"
+                                                 title="Eliminar"
+                                                 icon="pi pi-times" 
+                                                 styleClass="ui-button-danger" 
+                                                 actionListener="#{reparacionBean.eliminar(r)}"
+                                                 update="@form" />
+                            </div>
+                        </p:column>
+
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -5,24 +5,74 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Registro de Usuario</title>
+        <h:outputStylesheet library="css" name="output.css" />
     </h:head>
     <h:body>
         <f:view>
             <h:form>
-                <h1><h:outputText value="Create/Edit"/></h1>
-                <p:panelGrid columns="2">
-                    <p:outputLabel value="Nombre:" for="nombre" />
-                    <p:inputText id="nombre" value="#{acceso.usuario.nombre}" title="Nombre" required="true" requiredMessage="The Nombre field is required."/>
-                    <p:outputLabel value="Contrasena:" for="contrasena" />
-                    <p:inputText id="contrasena" value="#{acceso.usuario.contrasena}" title="Contrasena" required="true" requiredMessage="The Contrasena field is required."/>
-                    <p:outputLabel value="IdRol:" for="idRol" />
-                    <p:selectOneMenu id="idRol" value="#{acceso.usuario.idRol}" required="true" requiredMessage="The IdRol field is required.">
-                        <!-- TODO: update below reference to list of available items-->
-                        <f:selectItems value="#{fixme}"/>
-                    </p:selectOneMenu>
-                </p:panelGrid>
-                <p:commandButton type="button" value="Registrarse" action="index" actionListener="#{acceso.crearDatos()}" styleClass="rounded-button" />
+                <p:growl id="msg" showDetail="true" life="5000" />
+                <div class="flex items-center justify-center min-h-screen p-4 bg-gray-50">
+                    <div class="max-w-md w-full mx-auto border border-slate-300 rounded-2xl p-8">
+                        <div class="text-center mb-12">
+                            <a>
+                                <img src="#{resource['imagenes/register_onoof.png']}" alt="logo" class="w-40 inline-block" />
+                            </a>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label for="nombre" class="text-slate-800 text-sm font-medium mb-2 block">Nombre</label>
+                                <p:inputText id="nombre" 
+                                             value="#{acceso.usuario.nombre}" 
+                                             required="true" 
+                                             requiredMessage="El campo Nombre es obligatorio." 
+                                             styleClass="text-slate-800 bg-white border border-slate-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" />
+                            </div>
+
+                            <div>
+                                <label for="contrasena" class="text-slate-800 text-sm font-medium mb-2 block">Contraseña</label>
+                                <p:password id="contrasena" 
+                                            value="#{acceso.usuario.contrasena}" 
+                                            required="true" 
+                                            feedback="false"
+                                            requiredMessage="El campo Contraseña es obligatorio." 
+                                            styleClass="text-slate-800 bg-white border border-slate-300 w-full text-sm px-4 py-3 rounded-md outline-blue-500" />
+                            </div>
+
+                            <div>
+                                <label for="idRol" class="text-slate-800 text-sm font-medium mb-2 block">Rol</label>
+                                <p:selectOneMenu id="idRol"
+                                                 value="#{acceso.usuario.idRol.id}"
+                                                 required="true"
+                                                 requiredMessage="Debe seleccionar un rol.">
+                                    <f:selectItem itemLabel="Seleccione un rol" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{rolBean.listaRoles}"
+                                                   var="rol"
+                                                   itemValue="#{rol.id}" 
+                                                   itemLabel="#{rol.nombre}" />
+                                </p:selectOneMenu>
+
+                            </div>
+
+                            <div class="mt-12">
+                                <p:commandButton value="Crear cuenta" 
+                                                 action="#{acceso.registroUsuario}" 
+                                                 update="@form"
+                                                 styleClass="w-full py-3 px-4 text-sm tracking-wider font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer" />
+                            </div>
+
+                            <p class="text-slate-800 text-sm mt-6 text-center">
+                                ¿Ya tienes una cuenta? 
+                                <p:commandButton value="Iniciar sesión" 
+                                                 styleClass="text-blue-600 font-medium hover:underline ml-1 whitespace-nowrap ui-button-flat"
+                                                 process="@this"
+                                                 update="@none"
+                                                 action="/vistas/index.xhtml" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </h:form>
         </f:view>
     </h:body>

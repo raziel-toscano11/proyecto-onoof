@@ -15,7 +15,7 @@
                     <!-- FORM CARD -->
                     <div class="border border-slate-300 rounded-lg p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-lg:mx-auto">
                         <h:form styleClass="space-y-6">
-
+                            <p:growl id="msg" showDetail="true" life="5000" />                                
                             <!-- Título -->
                             <div class="mb-12">
                                 <h1 class="text-slate-900 text-3xl font-semibold">Inciar sesión</h1>
@@ -28,7 +28,7 @@
                             <div>
                                 <p:outputLabel for="username" value="Usuario" styleClass="text-slate-900 text-sm font-medium mb-2 block"/>
                                 <div class="relative flex items-center">
-                                    <p:inputText id="username" value="#{loginBean.username}" required="true"
+                                    <p:inputText id="username" value="#{acceso.usuario.nombre}" required="true"
                                                  placeholder="Ingresa tu usuario"
                                                  styleClass="w-full text-sm text-slate-900 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600" />
                                     <i class="pi pi-user absolute right-4 text-gray-400"></i>
@@ -40,16 +40,16 @@
                                 <h:outputLabel for="password" value="Contraseña"
                                                styleClass="text-slate-900 text-sm font-medium mb-2 block"/>
                                 <div class="relative flex items-center">
-                                    <h:inputSecret id="password" value="#{loginBean.password}" required="true" 
+                                    <h:inputSecret id="password" value="#{acceso.usuario.contrasena}" required="true" 
                                                    styleClass="w-full text-sm text-slate-900 border border-slate-300 pl-4 pr-10 py-3 rounded-lg outline-blue-600">
                                         <f:passThroughAttribute name="placeholder" value="Ingrese su contraseña" />
                                     </h:inputSecret>
                                 </div>
                             </div>
-                            
+
                             <!-- Botón -->
                             <div class="!mt-12">
-                                <p:commandButton value="Ingresar" action="#{loginBean.login}"
+                                <p:commandButton value="Ingresar" action="#{acceso.autenticarUsuario()}" ajax="false"
                                                  styleClass="w-full shadow-xl py-2.5 px-4 text-[15px] font-medium tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none cursor-pointer"/>
 
                                 <p class="text-sm !mt-6 text-center text-slate-600">
@@ -58,7 +58,7 @@
                                                      styleClass="text-blue-600 font-medium hover:underline ml-1 whitespace-nowrap ui-button-flat"
                                                      process="@this"
                                                      update="@none"
-                                                     action="/registro.xhtml" />
+                                                     action="/vistas/registro.xhtml" />
                                 </p>
                             </div>
 
@@ -67,10 +67,11 @@
 
                     <!-- Imagen -->
                     <div class="max-lg:mt-8">
-                        <img src="https://readymadeui.com/login-image.webp"
-                             class="w-full aspect-[71/50] max-lg:w-4/5 mx-auto block object-cover"
+                        <img src="#{resource['imagenes/login_onoof.png']}" 
+                             class="max-w-full h-auto mx-auto block"
                              alt="login img" />
                     </div>
+
 
                 </div>
             </div>

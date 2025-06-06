@@ -1,0 +1,280 @@
+-- reparacion1_schema.sql
+
+DROP DATABASE IF EXISTS onoof;
+CREATE DATABASE IF NOT EXISTS onoof;
+USE onoof;
+
+-- Tabla de roles de usuario
+CREATE TABLE rolUsuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion VARCHAR(255) NOT NULL
+);
+
+-- Tabla de usuarios
+CREATE TABLE usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
+    idRol INT NOT NULL,
+    FOREIGN KEY (idRol) REFERENCES rolUsuario(id)
+);
+
+-- Tabla de clientes
+CREATE TABLE cliente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    apellido VARCHAR(255) NOT NULL,
+    correo VARCHAR(255) NOT NULL,
+    telefono VARCHAR(255) NOT NULL
+);
+
+-- Tabla de marcas
+CREATE TABLE marca (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
+);
+
+-- Tabla de modelos
+CREATE TABLE modelo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    idMarca INT NOT NULL,
+    FOREIGN KEY (idMarca) REFERENCES marca(id) ON DELETE CASCADE
+);
+
+-- Tabla de dispositivos
+CREATE TABLE dispositivo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    modeloId INT NOT NULL,
+    FOREIGN KEY (modeloId) REFERENCES modelo(id)
+);
+
+-- Tabla de estados de reparación
+CREATE TABLE estado (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
+);
+
+-- Tabla de reparaciones
+CREATE TABLE reparacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    anticipo DOUBLE NOT NULL,
+    motivoReparacion VARCHAR(255) NOT NULL,
+    precioDiagnostico Double NOT NULL,
+    detalle VARCHAR(255) NOT NULL,
+    fechaIngreso DATETIME NOT NULL,
+    fechaEntrega DATETIME NOT NULL,
+    precioReparacion Double NOT NULL,
+    idEstado INT NOT NULL,
+    idCliente INT NOT NULL,
+    idDispositivo INT NOT NULL,
+    FOREIGN KEY (idEstado) REFERENCES estado(id),
+    FOREIGN KEY (idCliente) REFERENCES cliente(id),
+    FOREIGN KEY (idDispositivo) REFERENCES dispositivo(id)
+);
+
+-- Tabla de categorias para productos
+CREATE TABLE categoria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL
+);
+
+-- Tabla de productos (accesorios)
+CREATE TABLE producto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    descripcion VARCHAR(255) NOT NULL,
+    cantidad INT NOT NULL,
+    costoUnitario DOUBLE NOT NULL,
+    categoriaId INT NOT NULL,
+    garantiaDias INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (categoriaId) REFERENCES categoria(id)
+);
+
+CREATE TABLE reparacion_producto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idReparacion INT NOT NULL,
+    productoId INT NOT NULL,
+    cantidad INT NOT NULL,
+    FOREIGN KEY (idReparacion) REFERENCES reparacion(id),
+    FOREIGN KEY (productoId) REFERENCES producto(id)
+);
+
+
+-- Tabla de proveedores
+CREATE TABLE proveedor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    correo VARCHAR(255) NOT NULL,
+    telefono VARCHAR(255) NOT NULL
+);
+
+-- Tabla de relación entre proveedores y productos
+CREATE TABLE proveedor_producto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proveedorId INT NOT NULL,
+    productoId INT NOT NULL,
+    FOREIGN KEY (proveedorId) REFERENCES proveedor(id),
+    FOREIGN KEY (productoId) REFERENCES producto(id)
+);
+
+-- Tabla de inventarios
+CREATE TABLE inventario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fechaActualizacion DATETIME NOT NULL,
+    idCategoria INT NOT NULL,
+    FOREIGN KEY (idCategoria) REFERENCES categoria(id)
+);
+
+-- Tabla de inventario de productos
+CREATE TABLE inventario_producto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    productoId INT NOT NULL,
+    inventarioId INT NOT NULL,
+    cantidadDisponible INT NOT NULL,
+    FOREIGN KEY (productoId) REFERENCES producto(id),
+    FOREIGN KEY (inventarioId) REFERENCES inventario(id)
+);
+
+-- Tabla de ventas de accesorios
+CREATE TABLE venta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idCliente INT NOT NULL,
+    fechaVenta DATETIME NOT NULL,
+    total DOUBLE NOT NULL,
+    FOREIGN KEY (idCliente) REFERENCES cliente(id)
+);
+
+-- Detalle de productos vendidos en cada venta
+CREATE TABLE venta_detalle (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idVenta INT NOT NULL,
+    productoId INT NOT NULL,
+    cantidad INT NOT NULL,
+    precioUnitario DOUBLE NOT NULL,
+    FOREIGN KEY (idVenta) REFERENCES venta(id),
+    FOREIGN KEY (productoId) REFERENCES producto(id)
+);
+
+CREATE TABLE garantia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    idVentaDetalle INT NOT NULL,
+    fechaInicio DATETIME NOT NULL,
+    fechaFin DATETIME NOT NULL,
+    estado VARCHAR(50) NOT NULL, -- Ejemplo: 'Activa', 'Expirada', 'Reclamada'
+    observaciones VARCHAR(255),
+    FOREIGN KEY (idVentaDetalle) REFERENCES venta_detalle(id)
+);
+
+-- ========================
+-- Roles de usuario
+-- ========================
+INSERT INTO rolUsuario (nombre, descripcion) VALUES
+('Administrador', 'Gestiona todo el sistema'),
+('Vendedor', 'Gestiona ventas y productos'),
+('Tecnico', 'Realiza diagnósticos y reparaciones');
+
+-- ========================
+-- Usuarios
+-- ========================
+INSERT INTO usuario (nombre, contrasena, idRol) VALUES
+('admin', 'admin123', 1),
+('vendedor1', 'venta123', 2),
+('tecnico1', 'tecnico123', 3);
+
+-- ========================
+-- Estados de reparación
+-- ========================
+INSERT INTO estado (nombre) VALUES
+('En diagnóstico'),
+('En reparación'),
+('Reparado'),
+('Entregado'),
+('No recogido');
+
+-- ========================
+-- Clientes
+-- ========================
+INSERT INTO cliente (nombre, apellido, correo, telefono) VALUES
+('Juan', 'Pérez', 'juanperez@example.com', '555-1234'),
+('Ana', 'Gómez', 'anagomez@example.com', '555-5678');
+
+-- ========================
+-- Marcas y modelos
+-- ========================
+INSERT INTO marca (nombre) VALUES
+('Samsung'),
+('Apple');
+
+INSERT INTO modelo (nombre, idMarca) VALUES
+('Galaxy S21', 1),
+('iPhone 13', 2);
+
+-- ========================
+-- Dispositivos
+-- ========================
+INSERT INTO dispositivo (modeloId) VALUES
+(1), (2);
+
+-- ========================
+-- Categorías
+-- ========================
+INSERT INTO categoria (nombre) VALUES
+('Cables'),
+('Cargadores'),
+('Pantallas');
+
+-- ========================
+-- Productos
+-- ========================
+INSERT INTO producto (nombre, descripcion, cantidad, costoUnitario, categoriaId, garantiaDias) VALUES
+('Cable USB-C', 'Cable de carga USB tipo C', 50, 5.00, 1, 30),
+('Cargador iPhone', 'Cargador original Apple', 30, 25.00, 2, 60),
+('Pantalla Galaxy S21', 'Pantalla de reemplazo', 10, 120.00, 3, 90);
+
+-- ========================
+-- Proveedores
+-- ========================
+INSERT INTO proveedor (nombre, direccion, correo, telefono) VALUES
+('TechParts', 'Calle 1, CDMX', 'ventas@techparts.com', '555-0011'),
+('RepuestosMX', 'Avenida 5, GDL', 'contacto@repuestosmx.com', '555-0022');
+
+-- ========================
+-- Relación proveedor-producto
+-- ========================
+INSERT INTO proveedor_producto (proveedorId, productoId) VALUES
+(1, 1),
+(1, 2),
+(2, 3);
+
+-- ========================
+-- Inventario
+-- ========================
+INSERT INTO inventario (fechaActualizacion, idCategoria) VALUES
+(NOW(), 1),
+(NOW(), 2),
+(NOW(), 3);
+
+-- ========================
+-- Inventario de productos
+-- ========================
+INSERT INTO inventario_producto (productoId, inventarioId, cantidadDisponible) VALUES
+(1, 1, 50),
+(2, 2, 30),
+(3, 3, 10);
+
+-- ========================
+-- Reparaciones
+-- ========================
+INSERT INTO reparacion (anticipo, motivoReparacion, precioDiagnostico, detalle, fechaIngreso, fechaEntrega, precioReparacion, idEstado, idCliente, idDispositivo) VALUES
+(100.0, 'Pantalla rota', 50.0, 'El cliente reporta pantalla sin imagen', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 120.0, 1, 1, 1),
+(50.0, 'No carga', 40.0, 'No enciende, posible falla en puerto', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 80.0, 2, 2, 2);
+
+-- ========================
+-- Relación reparación-producto
+-- ========================
+INSERT INTO reparacion_producto (idReparacion, productoId, cantidad) VALUES
+(1, 3, 1), -- Pantalla Galaxy S21
+(2, 1, 1); -- Cable USB-C

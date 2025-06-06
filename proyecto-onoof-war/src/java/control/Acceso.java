@@ -58,15 +58,26 @@ public class Acceso implements Serializable {
         return mUsuarios.autenticarUsuario(usuario) != null;
     }
     
-    public String registroPersona() {
+    public String registroUsuario() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         
         if(!registrado()) {
-            
+            if(mUsuarios.obtenerPorUsuario(usuario.getNombre()) != null) {
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El usuario ya existe");
+                facesContext.addMessage(null, msg);
+                return null;
+            }
+            else {
+                registrarUsuario();
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Usuario registrado con éxito");
+                facesContext.addMessage(null, msg);
+                return "/vistas/index";
+            }
+        } else {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "El usuario ya existe");
+            facesContext.addMessage(null, msg);
+            return null;
         }
-        
-        
-        return null;
     }
     
     public boolean acceso() {
@@ -76,7 +87,7 @@ public class Acceso implements Serializable {
     public String autenticarUsuario() {
         FacesContext contexto = FacesContext.getCurrentInstance();
         if (acceso()) {
-            pagina = "pagina_princiapl";
+            pagina = "pagina_principal";
         }
         else {
             FacesMessage mjs = new FacesMessage("usuario o password invalido");
@@ -97,6 +108,8 @@ public class Acceso implements Serializable {
      * Creates a new instance of Acceso
      */
     public Acceso() {
+        usuario = new Usuario();
+        usuario.setIdRol(new modelo.Rolusuario());
     }
     
 }

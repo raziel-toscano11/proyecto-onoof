@@ -30,13 +30,23 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
     }
     
     public Usuario obtenerUsuario(String usuario, String password) {
-        String query = "SELECT u FROM Usuario u WHERE u.nombre = :usuario AND u.contrasena = :password";
+        String query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre AND u.contrasena = :contrasena";
         try {
             return em.createQuery(query, Usuario.class)
                     .setParameter("nombre", usuario)
                     .setParameter("contrasena", password)
                     .getSingleResult();
         } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    public Usuario obtenerPorUsuario(String nombre) {
+        try {
+            return em.createQuery("SELECT u FROM Usuario u WHERE u.nombre = :nombre", Usuario.class)
+                    .setParameter("nombre", nombre)
+                    .getSingleResult();
+        } catch(NoResultException e){
             return null;
         }
     }

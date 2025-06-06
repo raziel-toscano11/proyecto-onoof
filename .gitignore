@@ -1,9 +1,0 @@
-/target/
-/build/
-/bin/
-/out/
-*.log
-*.jar
-*.war
-*.ear
-*.class

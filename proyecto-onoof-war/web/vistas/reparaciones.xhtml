@@ -12,20 +12,29 @@
             <h:form>
                 <div class="flex justify-between items-center mb-2">
                     <p:commandButton type="button" value="Crear reparación" />
+
+                    <!-- Campo de búsqueda para filtrar por cliente -->
                     <span class="ui-input-icon-left">
                         <i class="pi pi-search" />
-                        <p:inputText placeholder="Buscar reparación" />
+                        <p:inputText placeholder="Buscar cliente" value="#{reparacionBean.busquedaCliente}">
+                            <!-- Se realiza un update del datatable con la búsqueda -->
+                            <p:ajax event="keyup" listener="#{reparacionBean.filtrarPorCliente}" update="reparacionesTable"/>
+                        </p:inputText>
                     </span>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <p:dataTable value="#{reparacionBean.listaReparaciones}" var="r"
+                    <p:dataTable id="reparacionesTable" value="#{reparacionBean.listaReparacionesFiltradas}" var="r"
                                  styleClass="min-w-full bg-white"
                                  rowStyleClass="even:bg-blue-50"
                                  paginator="true" rows="10">
 
                         <p:column headerText="Id" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <h:outputText value="#{r.id}" />
+                        </p:column>
+
+                        <p:column headerText="Cliente" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{reparacionBean.getClienteNombre(r)}" />
                         </p:column>
 
                         <p:column headerText="Anticipo" styleClass="p-4 text-left text-sm font-medium text-slate-800">
@@ -36,12 +45,6 @@
 
                         <p:column headerText="Motivo de Reparación" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <h:outputText value="#{r.motivoReparacion}" />
-                        </p:column>
-
-                        <p:column headerText="Precio Diagnóstico" styleClass="p-4 text-left text-sm font-medium text-slate-800">
-                            <h:outputText value="#{r.precioDiagnostico}">
-                                <f:convertNumber pattern="$ #,##0.00" />
-                            </h:outputText>
                         </p:column>
 
                         <p:column headerText="Detalle" styleClass="p-4 text-left text-sm font-medium text-slate-800">
@@ -63,11 +66,6 @@
 
                         <p:column headerText="Estado" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <h:outputText value="#{reparacionBean.getEstadoNombre(r)}" />
-                        </p:column>
-
-
-                        <p:column headerText="Marca" styleClass="p-4 text-left text-sm font-medium text-slate-800">
-                            <h:outputText value="#{reparacionBean.getMarcaNombre(r)}" />
                         </p:column>
 
                         <p:column headerText="Modelo" styleClass="p-4 text-left text-sm font-medium text-slate-800">

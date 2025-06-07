@@ -168,6 +168,10 @@ CREATE TABLE garantia (
     FOREIGN KEY (idVentaDetalle) REFERENCES venta_detalle(id)
 );
 
+
+
+
+
 -- ========================
 -- Roles de usuario
 -- ========================
@@ -199,24 +203,38 @@ INSERT INTO estado (nombre) VALUES
 -- ========================
 INSERT INTO cliente (nombre, apellido, correo, telefono) VALUES
 ('Juan', 'Pérez', 'juanperez@example.com', '555-1234'),
-('Ana', 'Gómez', 'anagomez@example.com', '555-5678');
+('Ana', 'Gómez', 'anagomez@example.com', '555-5678'),
+('Carlos', 'Ramírez', 'carlos@example.com', '555-8765'),
+('Laura', 'Fernández', 'laura@example.com', '555-2345'),
+('Pedro', 'López', 'pedro@example.com', '555-3456'),
+('Marta', 'Sánchez', 'marta@example.com', '555-4567'),
+('Luis', 'Martínez', 'luis@example.com', '555-5671'),
+('Eva', 'Rodríguez', 'eva@example.com', '555-6782'),
+('Ricardo', 'González', 'ricardo@example.com', '555-7893'),
+('José', 'Torres', 'jose@example.com', '555-8904');
 
 -- ========================
 -- Marcas y modelos
 -- ========================
 INSERT INTO marca (nombre) VALUES
 ('Samsung'),
-('Apple');
+('Apple'),
+('Huawei'),
+('Xiaomi'),
+('LG');
 
 INSERT INTO modelo (nombre, idMarca) VALUES
 ('Galaxy S21', 1),
-('iPhone 13', 2);
+('iPhone 13', 2),
+('P30', 3),
+('Mi 11', 4),
+('G8', 5);
 
 -- ========================
 -- Dispositivos
 -- ========================
 INSERT INTO dispositivo (modeloId) VALUES
-(1), (2);
+(1), (2), (3), (4), (5);
 
 -- ========================
 -- Categorías
@@ -224,7 +242,9 @@ INSERT INTO dispositivo (modeloId) VALUES
 INSERT INTO categoria (nombre) VALUES
 ('Cables'),
 ('Cargadores'),
-('Pantallas');
+('Pantallas'),
+('Baterías'),
+('Accesorios');
 
 -- ========================
 -- Productos
@@ -232,7 +252,9 @@ INSERT INTO categoria (nombre) VALUES
 INSERT INTO producto (nombre, descripcion, cantidad, costoUnitario, categoriaId, garantiaDias) VALUES
 ('Cable USB-C', 'Cable de carga USB tipo C', 50, 5.00, 1, 30),
 ('Cargador iPhone', 'Cargador original Apple', 30, 25.00, 2, 60),
-('Pantalla Galaxy S21', 'Pantalla de reemplazo', 10, 120.00, 3, 90);
+('Pantalla Galaxy S21', 'Pantalla de reemplazo', 10, 120.00, 3, 90),
+('Batería Huawei P30', 'Batería de repuesto para Huawei P30', 20, 40.00, 4, 180),
+('Accesorio Mi 11', 'Funda protectora para Mi 11', 40, 15.00, 5, 365);
 
 -- ========================
 -- Proveedores
@@ -247,7 +269,9 @@ INSERT INTO proveedor (nombre, direccion, correo, telefono) VALUES
 INSERT INTO proveedor_producto (proveedorId, productoId) VALUES
 (1, 1),
 (1, 2),
-(2, 3);
+(2, 3),
+(2, 4),
+(1, 5);
 
 -- ========================
 -- Inventario
@@ -255,7 +279,9 @@ INSERT INTO proveedor_producto (proveedorId, productoId) VALUES
 INSERT INTO inventario (fechaActualizacion, idCategoria) VALUES
 (NOW(), 1),
 (NOW(), 2),
-(NOW(), 3);
+(NOW(), 3),
+(NOW(), 4),
+(NOW(), 5);
 
 -- ========================
 -- Inventario de productos
@@ -263,18 +289,57 @@ INSERT INTO inventario (fechaActualizacion, idCategoria) VALUES
 INSERT INTO inventario_producto (productoId, inventarioId, cantidadDisponible) VALUES
 (1, 1, 50),
 (2, 2, 30),
-(3, 3, 10);
+(3, 3, 10),
+(4, 4, 20),
+(5, 5, 40);
 
 -- ========================
 -- Reparaciones
 -- ========================
 INSERT INTO reparacion (anticipo, motivoReparacion, precioDiagnostico, detalle, fechaIngreso, fechaEntrega, precioReparacion, idEstado, idCliente, idDispositivo) VALUES
 (100.0, 'Pantalla rota', 50.0, 'El cliente reporta pantalla sin imagen', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 120.0, 1, 1, 1),
-(50.0, 'No carga', 40.0, 'No enciende, posible falla en puerto', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 80.0, 2, 2, 2);
+(50.0, 'No carga', 40.0, 'No enciende, posible falla en puerto', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 80.0, 2, 2, 2),
+(70.0, 'Botón no funciona', 45.0, 'El botón de encendido no responde', NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 100.0, 1, 3, 3),
+(150.0, 'Pantalla rota', 60.0, 'Pantalla con grietas', NOW(), DATE_ADD(NOW(), INTERVAL 6 DAY), 200.0, 3, 4, 4),
+(90.0, 'Batería defectuosa', 50.0, 'La batería no carga correctamente', NOW(), DATE_ADD(NOW(), INTERVAL 2 DAY), 110.0, 2, 5, 5),
+(120.0, 'No enciende', 50.0, 'No responde al intentar encender', NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), 130.0, 1, 6, 1),
+(80.0, 'No carga', 40.0, 'El dispositivo no recibe carga', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 95.0, 2, 7, 2),
+(60.0, 'Problema con la pantalla táctil', 45.0, 'La pantalla táctil no responde correctamente', NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 100.0, 1, 8, 3),
+(150.0, 'Falla en el micrófono', 50.0, 'El micrófono no graba sonido', NOW(), DATE_ADD(NOW(), INTERVAL 6 DAY), 180.0, 3, 9, 4),
+(130.0, 'Pantalla rota', 60.0, 'Pantalla completamente rota', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 200.0, 1, 10, 5),
+(75.0, 'Falla en la cámara', 45.0, 'La cámara no toma fotos correctamente', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 100.0, 2, 1, 1),
+(110.0, 'Pantalla negra', 55.0, 'La pantalla no muestra nada', NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 140.0, 1, 2, 2),
+(125.0, 'Falla en el puerto USB', 50.0, 'El puerto USB no detecta los cables', NOW(), DATE_ADD(NOW(), INTERVAL 6 DAY), 150.0, 3, 3, 3),
+(95.0, 'No enciende', 50.0, 'El dispositivo no prende', NOW(), DATE_ADD(NOW(), INTERVAL 2 DAY), 120.0, 2, 4, 4),
+(135.0, 'No carga', 60.0, 'El dispositivo no carga correctamente', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 170.0, 1, 5, 5),
+(100.0, 'Problema con el altavoz', 45.0, 'El altavoz no emite sonido', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 120.0, 2, 6, 1),
+(150.0, 'Falla en el procesador', 60.0, 'El dispositivo se calienta excesivamente', NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), 180.0, 3, 7, 2),
+(80.0, 'No enciende', 50.0, 'El teléfono no responde al encenderlo', NOW(), DATE_ADD(NOW(), INTERVAL 4 DAY), 110.0, 1, 8, 3),
+(60.0, 'Pantalla rota', 45.0, 'Pantalla con grietas visibles', NOW(), DATE_ADD(NOW(), INTERVAL 6 DAY), 90.0, 2, 9, 4),
+(120.0, 'No carga', 50.0, 'Problema en el conector de carga', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 140.0, 1, 10, 5);
 
 -- ========================
 -- Relación reparación-producto
 -- ========================
 INSERT INTO reparacion_producto (idReparacion, productoId, cantidad) VALUES
 (1, 3, 1), -- Pantalla Galaxy S21
-(2, 1, 1); -- Cable USB-C
+(2, 1, 1), -- Cable USB-C
+(3, 4, 1), -- Batería Huawei P30
+(4, 3, 1), -- Pantalla Galaxy S21
+(5, 4, 1), -- Batería Huawei P30
+(6, 1, 1), -- Cable USB-C
+(7, 2, 1), -- Cargador iPhone
+(8, 5, 1), -- Accesorio Mi 11
+(9, 3, 1), -- Pantalla Galaxy S21
+(10, 1, 1), -- Cable USB-C
+(11, 3, 1), -- Pantalla Galaxy S21
+(12, 2, 1), -- Cargador iPhone
+(13, 1, 1), -- Cable USB-C
+(14, 5, 1), -- Accesorio Mi 11
+(15, 3, 1), -- Pantalla Galaxy S21
+(16, 1, 1), -- Cable USB-C
+(17, 4, 1), -- Batería Huawei P30
+(18, 3, 1), -- Pantalla Galaxy S21
+(19, 1, 1), -- Cable USB-C
+(20, 5, 1); -- Accesorio Mi 11
+

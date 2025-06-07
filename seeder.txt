@@ -234,7 +234,7 @@ INSERT INTO modelo (nombre, idMarca) VALUES
 -- Dispositivos
 -- ========================
 INSERT INTO dispositivo (modeloId) VALUES
-(1), (2), (3);
+(1), (2), (3), (4), (5);
 
 -- ========================
 -- Categorías
@@ -247,12 +247,14 @@ INSERT INTO categoria (nombre) VALUES
 -- ========================
 -- Productos
 -- ========================
+-- Actualicé la relación con las categorías según lo solicitado.
 INSERT INTO producto (nombre, descripcion, cantidad, costoUnitario, categoriaId, garantiaDias) VALUES
-('Cable USB-C', 'Cable de carga USB tipo C', 50, 5.00, 1, 30),
-('Cargador iPhone', 'Cargador original Apple', 30, 25.00, 2, 60),
-('Pantalla Galaxy S21', 'Pantalla de reemplazo', 10, 120.00, 3, 90),
-('Batería Huawei P30', 'Batería de repuesto para Huawei P30', 20, 40.00, 4, 180),
-('Accesorio Mi 11', 'Funda protectora para Mi 11', 40, 15.00, 5, 365);
+('Cable USB-C', 'Cable de carga USB tipo C', 50, 5.00, 1, 30), -- Refacciones
+('Cargador iPhone', 'Cargador original Apple', 30, 25.00, 2, 60), -- Accesorios
+('Pantalla Galaxy S21', 'Pantalla de reemplazo', 10, 120.00, 1, 90), -- Refacciones
+('Batería Huawei P30', 'Batería de repuesto para Huawei P30', 20, 40.00, 1, 180), -- Refacciones
+('Accesorio Mi 11', 'Funda protectora para Mi 11', 40, 15.00, 2, 365), -- Accesorios
+('Dispositivo Xiaomi Mi 11', 'Dispositivo móvil Mi 11', 15, 600.00, 3, 0); -- Dispositivos
 
 -- ========================
 -- Proveedores
@@ -277,9 +279,7 @@ INSERT INTO proveedor_producto (proveedorId, productoId) VALUES
 INSERT INTO inventario (fechaActualizacion, idCategoria) VALUES
 (NOW(), 1),
 (NOW(), 2),
-(NOW(), 3),
-(NOW(), 4),
-(NOW(), 5);
+(NOW(), 3);
 
 -- ========================
 -- Inventario de productos
@@ -288,8 +288,9 @@ INSERT INTO inventario_producto (productoId, inventarioId, cantidadDisponible) V
 (1, 1, 50),
 (2, 2, 30),
 (3, 3, 10),
-(4, 4, 20),
-(5, 5, 40);
+(4, 1, 20),
+(5, 2, 40),
+(6, 3, 15);
 
 -- ========================
 -- Reparaciones
@@ -340,4 +341,3 @@ INSERT INTO reparacion_producto (idReparacion, productoId, cantidad) VALUES
 (18, 3, 1), -- Pantalla Galaxy S21
 (19, 1, 1), -- Cable USB-C
 (20, 5, 1); -- Accesorio Mi 11
-

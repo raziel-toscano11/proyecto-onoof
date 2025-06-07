@@ -234,17 +234,15 @@ INSERT INTO modelo (nombre, idMarca) VALUES
 -- Dispositivos
 -- ========================
 INSERT INTO dispositivo (modeloId) VALUES
-(1), (2), (3), (4), (5);
+(1), (2), (3);
 
 -- ========================
 -- Categorías
 -- ========================
 INSERT INTO categoria (nombre) VALUES
-('Cables'),
-('Cargadores'),
-('Pantallas'),
-('Baterías'),
-('Accesorios');
+('Refacciones'),
+('Accesorios'),
+('Dispositivos');
 
 -- ========================
 -- Productos

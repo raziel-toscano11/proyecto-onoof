@@ -10,7 +10,7 @@ import modelo.Dispositivo;
 import modelo.Estado;
 import modelo.ReparacionProducto;
 
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2025-06-07T11:58:33")
+@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2025-06-08T00:01:17")
 @StaticMetamodel(Reparacion.class)
 public class Reparacion_ { 
 

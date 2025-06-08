@@ -11,7 +11,8 @@
         <ui:define name="contenido">
             <h:form>
                 <div class="flex justify-between items-center mb-2">
-                    <p:commandButton type="button" value="Crear reparación" />
+                    <p:commandButton value="Crear reparación" icon="pi pi-plus" 
+                                     onclick="PF('crearReparacionDlg').show(); return false;" />
 
                     <!-- Campo de búsqueda para filtrar por cliente -->
                     <span class="ui-input-icon-left">
@@ -91,6 +92,44 @@
                     </p:dataTable>
                 </div>
             </h:form>
+
+            <!-- Modal (Dialog) de crear reparación -->
+            <p:dialog id="crearReparacionDialog" header="Crear Nueva Reparación" widgetVar="crearReparacionDlg" modal="true" showEffect="fade" hideEffect="fade">
+                <h:form>
+                    <div class="space-y-6 mt-8">
+                        <div>
+                            <h:outputLabel for="nombreProducto" value="Nombre del producto" />
+                            <p:inputText id="nombreProducto" placeholder="Ingrese el nombre del producto" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="descripcionProducto" value="Descripción" />
+                            <p:inputTextarea id="descripcionProducto" placeholder="Escriba acerca del producto" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg" rows="3"/>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="cantidadProducto" value="Cantidad" />
+                            <p:inputText id="cantidadProducto" placeholder="Ingrese la cantidad" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="precioProducto" value="Precio de venta" />
+                            <p:inputText id="precioProducto" placeholder="Ingrese el precio" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="categoriaProducto" value="Categoría" />
+                            <p:inputText id="categoriaProducto" placeholder="Ingrese la categoría" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-8">
+                            <p:commandButton value="Cancelar" onclick="PF('crearReparacionDlg').hide()" class="px-6 py-3 rounded-lg text-slate-900 text-sm font-medium border-none outline-none tracking-wide bg-gray-200 hover:bg-gray-300"/>
+                            <p:commandButton value="Crear" actionListener="#{reparacionBean.crearReparacion}" class="px-6 py-3 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-blue-600 hover:bg-blue-700"/>
+                        </div>
+                    </div>
+                </h:form>
+            </p:dialog>
+
         </ui:define>
     </ui:composition>
 </html>

@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="/templates/plantilla_principal.xhtml">
+        <ui:define name="contenido">
+            <h:form>
+                <div class="flex justify-between items-center mb-2">
+                    <p:commandButton value="Agregar cliente" icon="pi pi-plus" 
+                                     onclick="PF('crearClienteDlg').show(); return false;" />
+                    <span class="ui-input-icon-left mb-3 block">
+                        <i class="pi pi-search" />
+                        <p:inputText placeholder="Buscar cliente" value="#{clienteBean.busquedaCliente}">
+                            <p:ajax event="keyup" listener="#{clienteBean.filtrarPorNombre}" update="tablaClientes"/>
+                        </p:inputText>
+                    </span>
+                </div>
+                <div class="overflow-x-auto">
+                    <p:dataTable id="tablaClientes" value="#{clienteBean.listaClientesFiltrados}" var="c"
+                                 styleClass="min-w-full bg-white"
+                                 rowStyleClass="even:bg-blue-50"
+                                 paginator="true" rows="10">
+
+                        <p:column headerText="Id" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{c.id}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{c.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Apellido" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{c.apellido}" />
+                        </p:column>
+
+                        <p:column headerText="Correo" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{c.correo}" />
+                        </p:column>
+
+                        <p:column headerText="Telefono" styleClass="p-4 text-left text-sm font-medium text-slate-800">
+                            <h:outputText value="#{c.telefono}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+            <p:dialog id="crearClienteDialog" header="Agregar Nuevo Cliente" widgetVar="crearClienteDlg" modal="true" showEffect="fade" hideEffect="fade">
+                <h:form>
+                    <p:growl id="mensajes" showDetail="true" life="5000" />
+                    <div class="space-y-6 mt-4">
+                        <div>
+                            <h:outputLabel for="nombreCliente" value="Nombre" />
+                            <p:inputText id="nombreCliente" 
+                                         value="#{clienteBean.seleccionado.nombre}" 
+                                         required="true"
+                                         label="Nombre"
+                                         requiredMessage="El nombre es obligatorio"
+                                         validatorMessage="Solo se permiten letras"
+                                         placeholder="Ingrese el nombre" 
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" />
+                            </p:inputText>
+                            <!--<p:message for="nombreCliente" />-->
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="apellidoCliente" value="Apellido" />
+                            <p:inputText id="apellidoCliente" 
+                                         value="#{clienteBean.seleccionado.apellido}" 
+                                         required="true"
+                                         label="Apellido"
+                                         requiredMessage="El apellido es obligatorio"
+                                         validatorMessage="Solo se permiten letras"
+                                         placeholder="Ingrese el apellido" 
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" />
+                            </p:inputText>
+                            <!--<p:message for="apellidoCliente" />-->
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="correoCliente" value="Correo" />
+                            <p:inputText id="correoCliente" 
+                                         value="#{clienteBean.seleccionado.correo}"
+                                         required="true"
+                                         placeholder="Ingrese el correo" 
+                                         label="Correo"
+                                         requiredMessage="El correo es obligatorio"
+                                         validatorMessage="Formato de correo inválido"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
+                            </p:inputText>
+                            <!--<p:message for="correoCliente" />-->
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="telefonoCliente" value="Teléfono" />
+                            <p:inputText id="telefonoCliente" 
+                                         value="#{clienteBean.seleccionado.telefono}"
+                                         required="true"
+                                         placeholder="Ingrese el teléfono" 
+                                         label="Telefono"
+                                         requiredMessage="El teléfono es obligatorio"
+                                         validatorMessage="Debe contener exactamente 10 dígitos"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="\d{10}" />
+                            </p:inputText>
+                            <!--<p:message for="telefonoCliente" />-->
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-6">
+                            <p:commandButton value="Cancelar" onclick="PF('crearClienteDlg').hide()" 
+                                             styleClass="px-6 py-3 rounded-lg text-slate-900 text-sm font-medium border-none outline-none tracking-wide bg-gray-200 hover:bg-gray-300"/>
+
+                            <p:commandButton value="Agregar" 
+                                             actionListener="#{clienteBean.crearCliente}" 
+                                             update="tablaClientes mensajes"
+                                             process="@form"
+                                             oncomplete="if (!args.validationFailed) PF('crearClienteDlg').hide();"
+                                             styleClass="px-6 py-3 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-blue-600 hover:bg-blue-700"/>
+                        </div>
+                    </div>
+                </h:form>
+            </p:dialog>
+        </ui:define>
+    </ui:composition>
+</html>

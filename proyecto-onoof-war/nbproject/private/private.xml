@@ -3,9 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/validator/FechasReparacionValidator.java</file>
             <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/web/templates/plantilla_principal.xhtml</file>
-            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/web/vistas/clientes.xhtml</file>
-            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/ClienteBean.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/EstadoBean.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/ModeloBean.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/Acceso.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/web/vistas/reparaciones.xhtml</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/converter/ClienteConverter.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/ReparacionBean.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/src/java/control/MarcaBean.java</file>
+            <file>file:/C:/Users/razie/Documents/NetBeansProjects/proyecto-onoof/proyecto-onoof-war/web/vistas/pagina_principal.xhtml</file>
         </group>
     </open-files>
 </project-private>

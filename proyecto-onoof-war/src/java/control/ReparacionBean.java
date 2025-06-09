@@ -12,6 +12,8 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -69,7 +71,6 @@ public class ReparacionBean implements Serializable {
         listaReparaciones = mReparacion.obtenerTodas();
     }
 
-    // Método para obtener todas las reparaciones (invocado por la vista)
     public List<Reparacion> getListaReparaciones() {
         if (listaReparaciones == null) {
             listaReparaciones = mReparacion.obtenerTodas();
@@ -86,7 +87,6 @@ public class ReparacionBean implements Serializable {
         this.seleccionada = seleccionada;
     }
 
-    // Acción para editar una reparación desde la tabla
     public void editar(Reparacion r) {
         this.seleccionada = r;
         mReparacion.actualizar(seleccionada);
@@ -96,7 +96,7 @@ public class ReparacionBean implements Serializable {
     // Acción para eliminar una reparación
     public void eliminar(Reparacion r) {
         mReparacion.eliminar(r);
-        listaReparaciones = null; // Forzar recarga
+        listaReparaciones = null;
     }
 
     // Limpia la selección
@@ -146,7 +146,7 @@ public class ReparacionBean implements Serializable {
 
     public List<Reparacion> getListaReparacionesFiltradas() {
         if (busquedaCliente == null || busquedaCliente.isEmpty()) {
-            return listaReparaciones; // Si no hay filtro, mostrar todas
+            return listaReparaciones;
         }
 
         listaReparacionesFiltradas = new ArrayList<>();
@@ -158,7 +158,6 @@ public class ReparacionBean implements Serializable {
         return listaReparacionesFiltradas;
     }
 
-    // Método para filtrar las reparaciones según el cliente
     public void filtrarPorCliente() {
         try {
             listaReparacionesFiltradas = getListaReparacionesFiltradas();
@@ -229,17 +228,17 @@ public class ReparacionBean implements Serializable {
             if (modelo != null) {
                 Dispositivo dispositivo = new Dispositivo();
                 dispositivo.setModeloId(modelo);
-                mDispositivo.registrar(dispositivo); // Guardar en la base
+                mDispositivo.registrar(dispositivo);
 
-                seleccionada.setIdDispositivo(dispositivo); // Asociar
+                seleccionada.setIdDispositivo(dispositivo);
             }
 
             Estado estado = mEstado.obtenerPorId(estadoIdSeleccionado);
             if (estado != null) {
-                seleccionada.setIdEstado(estado); // Asignar estado
+                seleccionada.setIdEstado(estado);
             }
 
-            mReparacion.registrar(seleccionada); // Guardar reparación
+            mReparacion.registrar(seleccionada);
             listaReparaciones = mReparacion.obtenerTodas();
             limpiar();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
@@ -266,33 +265,51 @@ public class ReparacionBean implements Serializable {
     public void prepararNuevaReparacion() {
         this.seleccionada = new Reparacion(); // Instancia nueva
     }
-    
+
     public void prepararEdicionEstado(Reparacion reparacion) {
-    this.seleccionada = reparacion;
-    if (reparacion.getIdEstado() != null) {
-        this.estadoIdSeleccionado = reparacion.getIdEstado().getId();
-    } else {
-        this.estadoIdSeleccionado = null;
-    }
-}
-
-    public void actualizarEstado() {
-    if (seleccionada != null && estadoIdSeleccionado != null) {
-        Estado nuevoEstado = mEstado.obtenerPorId(estadoIdSeleccionado);
-        if (nuevoEstado != null) {
-            seleccionada.setIdEstado(nuevoEstado);
-            mReparacion.actualizar(seleccionada);
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Estado actualizado correctamente", null));
-
-            listaReparaciones = mReparacion.obtenerTodas();
+        this.seleccionada = reparacion;
+        if (reparacion.getIdEstado() != null) {
+            this.estadoIdSeleccionado = reparacion.getIdEstado().getId();
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Estado no válido", null));
+            this.estadoIdSeleccionado = null;
         }
     }
-}
 
+    public void actualizarEstado() {
+        if (seleccionada != null && estadoIdSeleccionado != null) {
+            Estado nuevoEstado = mEstado.obtenerPorId(estadoIdSeleccionado);
+
+            if (nuevoEstado != null) {
+                Estado estadoActual = seleccionada.getIdEstado();
+                if (!esEstadoValido(estadoActual, nuevoEstado)) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Estado no valido", "Seleccione un estado valido"));
+                    return;
+                }
+                if ("Entregado".equals(nuevoEstado.getNombre())) {
+                    seleccionada.setFechaEntrega(new Date());
+                }
+                seleccionada.setIdEstado(nuevoEstado);
+                mReparacion.actualizar(seleccionada);
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Estado actualizado correctamente", null));
+
+                listaReparaciones = mReparacion.obtenerTodas();
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                        "Estado no valido", null));
+            }
+        }
+    }
+
+    private boolean esEstadoValido(Estado estadoActual, Estado nuevoEstado) {
+        List<String> secuenciaEstados = Arrays.asList("En diagnóstico", "En reparación", "Reparado", "Entregado", "No recogido");
+
+        int indiceActual = secuenciaEstados.indexOf(estadoActual.getNombre());
+        int indiceNuevo = secuenciaEstados.indexOf(nuevoEstado.getNombre());
+
+        return indiceNuevo == indiceActual + 1;
+    }
 
 }

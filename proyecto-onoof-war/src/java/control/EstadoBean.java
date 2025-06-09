@@ -5,6 +5,7 @@
 package control;
 
 import acceso_datos.EstadoFacade;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -42,6 +43,19 @@ public class EstadoBean {
 
     public void setEstadoSeleccionado(Integer estadoSeleccionado) {
         this.estadoSeleccionado = estadoSeleccionado;
+    }
+    
+    public List<Estado> getEstadosParaCreacion() {
+        List<Estado> listaEstados = estadoFacade.findAll();
+        List<Estado> estadosParaCreacion = new ArrayList<>();
+
+        for (Estado estado : listaEstados) {
+            if ("En diagnóstico".equals(estado.getNombre()) || "En reparación".equals(estado.getNombre())) {
+                estadosParaCreacion.add(estado);
+            }
+        }
+
+        return estadosParaCreacion;
     }
     
     /**

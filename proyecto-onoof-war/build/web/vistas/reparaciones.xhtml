@@ -220,7 +220,7 @@
                                                  required="true"
                                                  requiredMessage="Debe seleccionar un estado.">
                                     <f:selectItem itemLabel="Seleccione un estado" itemValue="" noSelectionOption="true"/>
-                                    <f:selectItems value="#{estadoBean.listaEstados}"
+                                    <f:selectItems value="#{estadoBean.estadosParaCreacion}"
                                                    var="estado"
                                                    itemValue="#{estado.id}" 
                                                    itemLabel="#{estado.nombre}" />

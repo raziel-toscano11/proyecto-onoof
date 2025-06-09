@@ -5,14 +5,18 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:o="http://omnifaces.org/ui">
 
     <ui:composition template="/templates/plantilla_principal.xhtml">
         <ui:define name="contenido">
-            <h:form>
+            <h:form id="formReparaciones">
                 <div class="flex justify-between items-center mb-2">
-                    <p:commandButton value="Crear reparación" icon="pi pi-plus" 
-                                     onclick="PF('crearReparacionDlg').show(); return false;" />
+                    <p:commandButton value="Crear reparación" icon="pi pi-plus"
+                                     actionListener="#{reparacionBean.prepararNuevaReparacion}"
+                                     update="formCrearReparacion"
+                                     oncomplete="PF('crearReparacionDlg').show()" />
+
 
                     <!-- Campo de búsqueda para filtrar por cliente -->
                     <span class="ui-input-icon-left">
@@ -76,16 +80,12 @@
                         <p:column headerText="Acciones" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <div class="flex items-center">
                                 <p:commandButton icon="pi pi-pencil" 
-                                                 title="Editar"
-                                                 actionListener="#{reparacionBean.editar(r)}"
-                                                 update="@form" 
-                                                 style="margin-right: .5rem;" />
-                                <p:commandButton type="button"
-                                                 title="Eliminar"
-                                                 icon="pi pi-times" 
-                                                 styleClass="ui-button-danger" 
-                                                 actionListener="#{reparacionBean.eliminar(r)}"
-                                                 update="@form" />
+                 title="Editar Estado"
+                 actionListener="#{reparacionBean.prepararEdicionEstado(r)}"
+                 update=":formEditarEstado"
+                 oncomplete="PF('editarEstadoDlg').show()"
+                 style="margin-right: .5rem;" />
+
                             </div>
                         </p:column>
 
@@ -95,40 +95,192 @@
 
             <!-- Modal (Dialog) de crear reparación -->
             <p:dialog id="crearReparacionDialog" header="Crear Nueva Reparación" widgetVar="crearReparacionDlg" modal="true" showEffect="fade" hideEffect="fade">
-                <h:form>
-                    <div class="space-y-6 mt-8">
-                        <div>
-                            <h:outputLabel for="nombreProducto" value="Nombre del producto" />
-                            <p:inputText id="nombreProducto" placeholder="Ingrese el nombre del producto" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
-                        </div>
+                <h:form id="formCrearReparacion">
+                    <p:growl id="mensajesReparacion" showDetail="true" life="5000"/>
+                    <div class="space-y-6 mt-6">
+                        <p:panel header="Buscar Cliente" styleClass="mb-4">
+                            <p:autoComplete id="busquedaCliente"
+                                            value="#{reparacionBean.idClienteSeleccionado}"
+                                            completeMethod="#{reparacionBean.completarClientes}"
+                                            var="cliente"
+                                            itemLabel="#{cliente.nombre} #{cliente.apellido}"
+                                            itemValue="#{cliente.id}"
+                                            dropdown="true"
+                                            forceSelection="true"
+                                            required="true"
+                                            requiredMessage="Debe seleccionar un cliente."
+                                            styleClass="w-full" />
+                        </p:panel>
+                        <p:panelGrid columns="6" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="anticipo" value="Anticipo" />
+                                <p:inputText id="anticipo" 
+                                             value="#{reparacionBean.seleccionada.anticipo}" 
+                                             placeholder="$0.00"
+                                             required="true"
+                                             requiredMessage="Debe ingresar el anticipo."
+                                             >
+                                    <f:convertNumber pattern="#0.00" />
+                                    <f:validateDoubleRange minimum="0.0" />
+                                </p:inputText>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="precioDiagnostico" value="Precio diagnóstico" />
+                                <p:inputText id="precioDiagnostico" 
+                                             value="#{reparacionBean.seleccionada.precioDiagnostico}" 
+                                             placeholder="$0.00"
+                                             required="true"
+                                             requiredMessage="Debe ingresar el precio del diagnóstico."
+                                             >
+                                    <f:convertNumber pattern="#0.00" />
+                                    <f:validateDoubleRange minimum="0.0" />
+                                </p:inputText>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="precioReparacion" value="Precio reparación" />
+                                <p:inputText id="precioReparacion" 
+                                             value="#{reparacionBean.seleccionada.precioReparacion}" 
+                                             placeholder="$0.00"
+                                             required="true"
+                                             requiredMessage="Debe ingresar el precio de reparación."
+                                             >
+                                    <f:convertNumber pattern="#0.00" />
+                                    <f:validateDoubleRange minimum="0.0" />
+                                </p:inputText>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="motivoReparacion" value="Motivo reparación" />
+                                <p:inputText id="motivoReparacion" 
+                                             value="#{reparacionBean.seleccionada.motivoReparacion}" 
+                                             placeholder="Ingrese motivo" 
+                                             required="true"
+                                             requiredMessage="Debe ingresar el motivo de reparación." />
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="detalle" value="Detalle" />
+                                <p:inputTextarea id="detalle" 
+                                                 value="#{reparacionBean.seleccionada.detalle}" 
+                                                 rows="3" 
+                                                 placeholder="Describa el detalle" 
+                                                 required="true" 
+                                                 requiredMessage="Debe ingresar el detalle."
+                                                 />
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="fechaIngreso" value="Fecha ingreso" />
+                                <p:calendar id="fechaIngreso" 
+                                            value="#{reparacionBean.seleccionada.fechaIngreso}" 
+                                            pattern="yyyy-MM-dd" 
+                                            required="true"
+                                            requiredMessage="Debe ingresar la fecha de ingreso."
+                                            />
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" styleClass="w-full">
+                                <h:outputLabel for="fechaEntrega" value="Fecha entrega" />
+                                <p:calendar id="fechaEntrega"
+                                            value="#{reparacionBean.seleccionada.fechaEntrega}"
+                                            pattern="yyyy-MM-dd"
+                                            required="true"
+                                            requiredMessage="Debe ingresar la fecha de entrega.">
+                                    <f:validator validatorId="fechasReparacionValidator" />
+                                    <f:attribute name="fechaIngreso" value="#{reparacionBean.seleccionada.fechaIngreso}" />
+                                </p:calendar>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="idMarca" value="Marca" />
+                                <p:selectOneMenu id="idMarca"
+                                                 value="#{modeloBean.idMarcaSeleccionada}"
+                                                 required="true"
+                                                 requiredMessage="Debe seleccionar una marca.">
+                                    <f:selectItem itemLabel="Seleccione una marca" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{marcaBean.listaMarcas}"
+                                                   var="marca"
+                                                   itemValue="#{marca.id}" 
+                                                   itemLabel="#{marca.nombre}" />
+                                    <p:ajax update="modeloId" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="modeloId" value="Modelo" />
+                                <p:selectOneMenu id="modeloId"
+                                                 value="#{reparacionBean.modeloIdSeleccionado}"
+                                                 required="true"
+                                                 requiredMessage="Debe seleccionar un modelo.">
+                                    <f:selectItem itemLabel="Seleccione un modelo" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{modeloBean.modelosFiltrados}"
+                                                   var="modelo"
+                                                   itemValue="#{modelo.id}" 
+                                                   itemLabel="#{modelo.nombre}" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                            <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
+                                <h:outputLabel for="idEstado" value="Estado" />
+                                <p:selectOneMenu id="idEstado"
+                                                 value="#{reparacionBean.estadoIdSeleccionado}"
+                                                 required="true"
+                                                 requiredMessage="Debe seleccionar un estado.">
+                                    <f:selectItem itemLabel="Seleccione un estado" itemValue="" noSelectionOption="true"/>
+                                    <f:selectItems value="#{estadoBean.listaEstados}"
+                                                   var="estado"
+                                                   itemValue="#{estado.id}" 
+                                                   itemLabel="#{estado.nombre}" />
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <div class="flex justify-end gap-4 mt-4">
+                            <p:commandButton value="Cancelar" actionListener="#{reparacionBean.limpiar}"
+                                             oncomplete="PF('crearReparacionDlg').hide()"
+                                             process="@this"
+                                             update="formCrearReparacion"
+                                             styleClass="px-6 py-3 rounded-lg text-slate-900 bg-gray-200 hover:bg-gray-300"/>
 
-                        <div>
-                            <h:outputLabel for="descripcionProducto" value="Descripción" />
-                            <p:inputTextarea id="descripcionProducto" placeholder="Escriba acerca del producto" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg" rows="3"/>
-                        </div>
+                            <p:commandButton value="Crear"
+                                             actionListener="#{reparacionBean.crearReparacion}"
+                                             update=":formCrearReparacion:mensajesReparacion :formCrearReparacion :formReparaciones:reparacionesTable"
+                                             process="formCrearReparacion"
+                                             oncomplete="if (!args.validationFailed) PF('crearReparacionDlg').hide();"
+                                             styleClass="px-6 py-3 rounded-lg text-white bg-blue-600 hover:bg-blue-700"/>
 
-                        <div>
-                            <h:outputLabel for="cantidadProducto" value="Cantidad" />
-                            <p:inputText id="cantidadProducto" placeholder="Ingrese la cantidad" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
-                        </div>
-
-                        <div>
-                            <h:outputLabel for="precioProducto" value="Precio de venta" />
-                            <p:inputText id="precioProducto" placeholder="Ingrese el precio" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
-                        </div>
-
-                        <div>
-                            <h:outputLabel for="categoriaProducto" value="Categoría" />
-                            <p:inputText id="categoriaProducto" placeholder="Ingrese la categoría" styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg"/>
-                        </div>
-
-                        <div class="flex justify-end gap-4 mt-8">
-                            <p:commandButton value="Cancelar" onclick="PF('crearReparacionDlg').hide()" class="px-6 py-3 rounded-lg text-slate-900 text-sm font-medium border-none outline-none tracking-wide bg-gray-200 hover:bg-gray-300"/>
-                            <p:commandButton value="Crear" actionListener="#{reparacionBean.crearReparacion}" class="px-6 py-3 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-blue-600 hover:bg-blue-700"/>
                         </div>
                     </div>
                 </h:form>
             </p:dialog>
+            <p:dialog id="editarEstadoDialog" header="Editar Estado de Reparación"
+          widgetVar="editarEstadoDlg" modal="true" showEffect="fade" hideEffect="fade" responsive="true">
+    <h:form id="formEditarEstado">
+        <p:growl id="mensajesEditarEstado" showDetail="true" life="5000"/>
+
+        <h:panelGrid columns="2" cellpadding="5">
+            <h:outputLabel for="nuevoEstado" value="Nuevo Estado:" />
+            <p:selectOneMenu id="nuevoEstado"
+                             value="#{reparacionBean.estadoIdSeleccionado}"
+                             required="true"
+                             requiredMessage="Debe seleccionar un estado.">
+                <f:selectItem itemLabel="Seleccione un estado" itemValue="" noSelectionOption="true"/>
+                <f:selectItems value="#{estadoBean.listaEstados}"
+                               var="estado"
+                               itemValue="#{estado.id}"
+                               itemLabel="#{estado.nombre}" />
+            </p:selectOneMenu>
+        </h:panelGrid>
+
+        <p:divider />
+
+        <div class="flex justify-end gap-4 mt-4">
+            <p:commandButton value="Cancelar" 
+                             onclick="PF('editarEstadoDlg').hide();" 
+                             type="button"
+                             styleClass="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300"/>
+                             
+            <p:commandButton value="Guardar"
+                             actionListener="#{reparacionBean.actualizarEstado}"
+                             update=":formEditarEstado:mensajesEditarEstado :formEditarEstado :formReparaciones:reparacionesTable"
+                             oncomplete="if (!args.validationFailed) PF('editarEstadoDlg').hide();"
+                             process="formEditarEstado"
+                             styleClass="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"/>
+        </div>
+    </h:form>
+</p:dialog>
 
         </ui:define>
     </ui:composition>

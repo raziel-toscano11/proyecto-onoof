@@ -7,7 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition template="/templates/plantilla_principal.xhtml">
         <ui:define name="contenido">
-            <h:form>
+            <h:form id="formClientes">
                 <div class="flex justify-between items-center mb-2">
                     <p:commandButton value="Agregar cliente" icon="pi pi-plus" 
                                      onclick="PF('crearClienteDlg').show(); return false;" />
@@ -43,6 +43,15 @@
                         <p:column headerText="Telefono" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <h:outputText value="#{c.telefono}" />
                         </p:column>
+                        <p:column headerText="Acciones" styleClass="p-4 text-center text-sm font-medium text-slate-800">
+                            <p:commandButton icon="pi pi-pencil" title="Editar"
+                                             update=":formEditarCliente"
+                                             actionListener="#{clienteBean.prepararEdicion(c)}"
+                                             oncomplete="PF('editarClienteDlg').show();"
+                                             process="@this"
+                                             styleClass="rounded-full bg-yellow-400 text-white p-2 hover:bg-yellow-500 border-none" />
+                        </p:column>
+
                     </p:dataTable>
                 </div>
             </h:form>
@@ -120,6 +129,75 @@
                                              process="@form"
                                              oncomplete="if (!args.validationFailed) PF('crearClienteDlg').hide();"
                                              styleClass="px-6 py-3 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-blue-600 hover:bg-blue-700"/>
+                        </div>
+                    </div>
+                </h:form>
+            </p:dialog>
+            <p:dialog id="editarClienteDialog" header="Editar Cliente" widgetVar="editarClienteDlg" modal="true" showEffect="fade" hideEffect="fade">
+                <h:form id="formEditarCliente">
+                    <p:growl id="mensajesEditar" showDetail="true" life="5000" />
+                    <div class="space-y-6 mt-4">
+                        <div>
+                            <h:outputLabel for="nombreEdit" value="Nombre" />
+                            <p:inputText id="nombreEdit" value="#{clienteBean.seleccionado.nombre}"
+                                         required="true" label="Nombre"
+                                         requiredMessage="El nombre es obligatorio"
+                                         validatorMessage="Solo se permiten letras"
+                                         placeholder="Ingrese el nombre"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" />
+                            </p:inputText>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="apellidoEdit" value="Apellido" />
+                            <p:inputText id="apellidoEdit" value="#{clienteBean.seleccionado.apellido}"
+                                         required="true" label="Apellido"
+                                         requiredMessage="El apellido es obligatorio"
+                                         validatorMessage="Solo se permiten letras"
+                                         placeholder="Ingrese el apellido"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" />
+                            </p:inputText>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="correoEdit" value="Correo" />
+                            <p:inputText id="correoEdit" value="#{clienteBean.seleccionado.correo}"
+                                         required="true" label="Correo"
+                                         requiredMessage="El correo es obligatorio"
+                                         validatorMessage="Formato de correo inválido"
+                                         placeholder="Ingrese el correo"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
+                            </p:inputText>
+                        </div>
+
+                        <div>
+                            <h:outputLabel for="telefonoEdit" value="Teléfono" />
+                            <p:inputText id="telefonoEdit" value="#{clienteBean.seleccionado.telefono}"
+                                         required="true" label="Telefono"
+                                         requiredMessage="El teléfono es obligatorio"
+                                         validatorMessage="Debe contener exactamente 10 dígitos"
+                                         placeholder="Ingrese el teléfono"
+                                         styleClass="px-4 py-3 bg-gray-100 w-full text-slate-900 text-sm border-none focus:outline-blue-600 focus:bg-transparent rounded-lg">
+                                <f:validateRegex pattern="\d{10}" />
+                            </p:inputText>
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-6">
+                            <p:commandButton value="Cancelar"
+                                             actionListener="#{clienteBean.limpiar}"
+                                             oncomplete="PF('editarClienteDlg').hide()"
+                                             process="@this"
+                                             update="formEditarCliente"
+                                             styleClass="px-6 py-3 rounded-lg text-slate-900 text-sm font-medium border-none outline-none tracking-wide bg-gray-200 hover:bg-gray-300"/>
+                            <p:commandButton value="Actualizar" 
+                                             actionListener="#{clienteBean.editar(clienteBean.seleccionado)}"
+                                             update=":formClientes:tablaClientes :formEditarCliente:mensajesEditar"
+                                             process="@form"
+                                             oncomplete="if (!args.validationFailed) PF('editarClienteDlg').hide();"
+                                             styleClass="px-6 py-3 rounded-lg text-white text-sm font-medium border-none outline-none tracking-wide bg-green-600 hover:bg-green-700"/>
                         </div>
                     </div>
                 </h:form>

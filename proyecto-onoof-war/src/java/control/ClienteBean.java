@@ -71,10 +71,14 @@ public class ClienteBean implements Serializable {
         }
     }
 
-    public void editar(Cliente r) {
-        this.seleccionado = r;
-        mCliente.actualizar(seleccionado);
-        limpiar();
+    public void editar(Cliente c) {
+        if (c != null) {
+            mCliente.actualizar(c);
+            listaClientes = mCliente.obtenerTodas(); // Actualiza la lista
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Éxito", "Cliente actualizado correctamente"));
+            seleccionado = new Cliente(); // Limpia
+        }
     }
 
     public void eliminar(Cliente r) {
@@ -122,4 +126,7 @@ public class ClienteBean implements Serializable {
         }
     }
 
+    public void prepararEdicion(Cliente c) {
+        this.seleccionado = c;
+    }
 }

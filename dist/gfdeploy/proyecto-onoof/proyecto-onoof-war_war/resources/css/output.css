@@ -7,6 +7,12 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-100: oklch(93.6% 0.032 17.717);
+    --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-yellow-400: oklch(85.2% 0.199 91.936);
+    --color-yellow-500: oklch(79.5% 0.184 86.047);
+    --color-green-600: oklch(62.7% 0.194 149.214);
+    --color-green-700: oklch(52.7% 0.154 150.069);
     --color-blue-50: oklch(97% 0.014 254.604);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
@@ -28,18 +34,24 @@
     --color-white: #fff;
     --spacing: 0.25rem;
     --container-md: 28rem;
+    --container-xl: 36rem;
     --container-6xl: 72rem;
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
     --text-xl--line-height: calc(1.75 / 1.25);
     --text-2xl: 1.5rem;
     --text-2xl--line-height: calc(2 / 1.5);
     --text-3xl: 1.875rem;
     --text-3xl--line-height: calc(2.25 / 1.875);
+    --text-4xl: 2.25rem;
+    --text-4xl--line-height: calc(2.5 / 2.25);
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
     --tracking-wide: 0.025em;
     --tracking-wider: 0.05em;
     --leading-relaxed: 1.625;
@@ -257,6 +269,9 @@
   .mt-8 {
     margin-top: calc(var(--spacing) * 8);
   }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
   }
@@ -265,6 +280,9 @@
   }
   .mb-3 {
     margin-bottom: calc(var(--spacing) * 3);
+  }
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
   }
   .mb-5 {
     margin-bottom: calc(var(--spacing) * 5);
@@ -335,6 +353,9 @@
   .max-w-md {
     max-width: var(--container-md);
   }
+  .max-w-xl {
+    max-width: var(--container-xl);
+  }
   .min-w-full {
     min-width: 100%;
   }
@@ -395,8 +416,14 @@
   .overflow-y-auto {
     overflow-y: auto;
   }
+  .rounded {
+    border-radius: 0.25rem;
+  }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
   }
   .rounded-lg {
     border-radius: var(--radius-lg);
@@ -438,8 +465,20 @@
   .bg-gray-200 {
     background-color: var(--color-gray-200);
   }
+  .bg-green-600 {
+    background-color: var(--color-green-600);
+  }
+  .bg-red-100 {
+    background-color: var(--color-red-100);
+  }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
+  }
   .bg-white {
     background-color: var(--color-white);
+  }
+  .bg-yellow-400 {
+    background-color: var(--color-yellow-400);
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
@@ -503,6 +542,14 @@
     font-size: var(--text-3xl);
     line-height: var(--tw-leading, var(--text-3xl--line-height));
   }
+  .text-4xl {
+    font-size: var(--text-4xl);
+    line-height: var(--tw-leading, var(--text-4xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
   .text-sm {
     font-size: var(--text-sm);
     line-height: var(--tw-leading, var(--text-sm--line-height));
@@ -521,6 +568,10 @@
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
+  }
+  .font-extrabold {
+    --tw-font-weight: var(--font-weight-extrabold);
+    font-weight: var(--font-weight-extrabold);
   }
   .font-medium {
     --tw-font-weight: var(--font-weight-medium);
@@ -547,11 +598,17 @@
   .text-blue-600 {
     color: var(--color-blue-600);
   }
+  .text-blue-700 {
+    color: var(--color-blue-700);
+  }
   .text-gray-400 {
     color: var(--color-gray-400);
   }
   .text-gray-500 {
     color: var(--color-gray-500);
+  }
+  .text-gray-700 {
+    color: var(--color-gray-700);
   }
   .text-gray-900 {
     color: var(--color-gray-900);
@@ -631,6 +688,20 @@
       }
     }
   }
+  .hover\:bg-green-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-green-700);
+      }
+    }
+  }
+  .hover\:bg-yellow-500 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-yellow-500);
+      }
+    }
+  }
   .hover\:underline {
     &:hover {
       @media (hover: hover) {
@@ -706,9 +777,19 @@
       background-color: var(--color-gray-800);
     }
   }
+  .dark\:text-gray-300 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-gray-300);
+    }
+  }
   .dark\:text-gray-400 {
     @media (prefers-color-scheme: dark) {
       color: var(--color-gray-400);
+    }
+  }
+  .dark\:text-gray-700 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-gray-700);
     }
   }
   .dark\:text-white {

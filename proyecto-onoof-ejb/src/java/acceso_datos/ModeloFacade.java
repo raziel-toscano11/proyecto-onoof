@@ -4,6 +4,7 @@
  */
 package acceso_datos;
 
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,5 +28,12 @@ public class ModeloFacade extends AbstractFacade<Modelo> {
     public ModeloFacade() {
         super(Modelo.class);
     }
-    
+
+    public List<Modelo> obtenerPorMarca(int idMarca) {
+        return getEntityManager()
+                .createQuery("SELECT m FROM Modelo m WHERE m.idMarca.id = :idMarca", Modelo.class)
+                .setParameter("idMarca", idMarca)
+                .getResultList();
+    }
+
 }

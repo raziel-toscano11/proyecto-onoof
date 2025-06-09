@@ -13,6 +13,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -30,6 +31,7 @@ import modelo.Cliente;
 import modelo.Dispositivo;
 import modelo.Estado;
 import modelo.Modelo;
+import org.primefaces.PrimeFaces;
 
 @Named(value = "reparacionBean")
 @SessionScoped
@@ -62,6 +64,8 @@ public class ReparacionBean implements Serializable {
 
     @Inject
     private ModeloBean modeloBean;
+    
+    private Date minFechaEntrega;
 
     public ReparacionBean() {
     }
@@ -310,6 +314,36 @@ public class ReparacionBean implements Serializable {
         int indiceNuevo = secuenciaEstados.indexOf(nuevoEstado.getNombre());
 
         return indiceNuevo == indiceActual + 1;
+    }
+    
+    public Date getMinFechaEntrega() {
+    return minFechaEntrega;
+}
+
+public void setMinFechaEntrega(Date minFechaEntrega) {
+    this.minFechaEntrega = minFechaEntrega;
+}
+    
+    public void validarFechaIngreso() {
+    if (seleccionada != null && seleccionada.getFechaIngreso() != null) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(seleccionada.getFechaIngreso());
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        minFechaEntrega = cal.getTime();
+    }
+}
+    public void validarFechaEntrega() {
+        if (seleccionada != null && seleccionada.getFechaEntrega() != null && seleccionada.getFechaIngreso() != null) {
+            if (seleccionada.getFechaEntrega().before(seleccionada.getFechaIngreso())) {
+                FacesContext.getCurrentInstance().addMessage(null, 
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+                        "La fecha de entrega no puede ser anterior a la fecha de ingreso", null));
+
+                PrimeFaces.current().executeScript("alert('La fecha de entrega no puede ser anterior a la fecha de ingreso!');");
+
+                seleccionada.setFechaEntrega(null);
+            }
+        }
     }
 
 }

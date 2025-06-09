@@ -80,11 +80,11 @@
                         <p:column headerText="Acciones" styleClass="p-4 text-left text-sm font-medium text-slate-800">
                             <div class="flex items-center">
                                 <p:commandButton icon="pi pi-pencil" 
-                 title="Editar Estado"
-                 actionListener="#{reparacionBean.prepararEdicionEstado(r)}"
-                 update=":formEditarEstado"
-                 oncomplete="PF('editarEstadoDlg').show()"
-                 style="margin-right: .5rem;" />
+                                                 title="Editar Estado"
+                                                 actionListener="#{reparacionBean.prepararEdicionEstado(r)}"
+                                                 update=":formEditarEstado"
+                                                 oncomplete="PF('editarEstadoDlg').show()"
+                                                 style="margin-right: .5rem;" />
 
                             </div>
                         </p:column>
@@ -95,6 +95,17 @@
 
             <!-- Modal (Dialog) de crear reparación -->
             <p:dialog id="crearReparacionDialog" header="Crear Nueva Reparación" widgetVar="crearReparacionDlg" modal="true" showEffect="fade" hideEffect="fade">
+                <h:outputScript>
+                    $(document).ready(function() {
+                    // Establecer la fecha mínima de entrega cuando la fecha de ingreso cambia
+                    $('#fechaIngreso').on('change', function() {
+                    var fechaIngreso = $(this).val();
+                    // Establecer la fecha mínima de entrega en el componente fechaEntrega
+                    $('#fechaEntrega').datepicker("option", "minDate", new Date(fechaIngreso));
+                    });
+                    });
+                </h:outputScript>
+
                 <h:form id="formCrearReparacion">
                     <p:growl id="mensajesReparacion" showDetail="true" life="5000"/>
                     <div class="space-y-6 mt-6">
@@ -168,12 +179,14 @@
                             </p:panelGrid>
                             <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
                                 <h:outputLabel for="fechaIngreso" value="Fecha ingreso" />
-                                <p:calendar id="fechaIngreso" 
-                                            value="#{reparacionBean.seleccionada.fechaIngreso}" 
-                                            pattern="yyyy-MM-dd" 
+                                <p:calendar id="fechaIngreso"
+                                            value="#{reparacionBean.seleccionada.fechaIngreso}"
+                                            pattern="yyyy-MM-dd"
                                             required="true"
                                             requiredMessage="Debe ingresar la fecha de ingreso."
-                                            />
+                                            showButtonPanel="true">
+                                    <p:ajax event="dateSelect" listener="#{reparacionBean.validarFechaIngreso}" update="fechaEntrega" />
+                                </p:calendar>
                             </p:panelGrid>
                             <p:panelGrid columns="1" styleClass="w-full">
                                 <h:outputLabel for="fechaEntrega" value="Fecha entrega" />
@@ -181,10 +194,12 @@
                                             value="#{reparacionBean.seleccionada.fechaEntrega}"
                                             pattern="yyyy-MM-dd"
                                             required="true"
-                                            requiredMessage="Debe ingresar la fecha de entrega.">
-                                    <f:validator validatorId="fechasReparacionValidator" />
-                                    <f:attribute name="fechaIngreso" value="#{reparacionBean.seleccionada.fechaIngreso}" />
+                                            requiredMessage="Debe ingresar la fecha de entrega."
+                                            showButtonPanel="true">
+                                    <p:ajax event="dateSelect" listener="#{reparacionBean.validarFechaEntrega}"
+                                            update=":formCrearReparacion:fechaEntrega" />
                                 </p:calendar>
+
                             </p:panelGrid>
                             <p:panelGrid columns="1" columnClasses="w-1/3,w-2/3" styleClass="w-full">
                                 <h:outputLabel for="idMarca" value="Marca" />
@@ -246,41 +261,41 @@
                 </h:form>
             </p:dialog>
             <p:dialog id="editarEstadoDialog" header="Editar Estado de Reparación"
-          widgetVar="editarEstadoDlg" modal="true" showEffect="fade" hideEffect="fade" responsive="true">
-    <h:form id="formEditarEstado">
-        <p:growl id="mensajesEditarEstado" showDetail="true" life="5000"/>
+                      widgetVar="editarEstadoDlg" modal="true" showEffect="fade" hideEffect="fade" responsive="true">
+                <h:form id="formEditarEstado">
+                    <p:growl id="mensajesEditarEstado" showDetail="true" life="5000"/>
 
-        <h:panelGrid columns="2" cellpadding="5">
-            <h:outputLabel for="nuevoEstado" value="Nuevo Estado:" />
-            <p:selectOneMenu id="nuevoEstado"
-                             value="#{reparacionBean.estadoIdSeleccionado}"
-                             required="true"
-                             requiredMessage="Debe seleccionar un estado.">
-                <f:selectItem itemLabel="Seleccione un estado" itemValue="" noSelectionOption="true"/>
-                <f:selectItems value="#{estadoBean.listaEstados}"
-                               var="estado"
-                               itemValue="#{estado.id}"
-                               itemLabel="#{estado.nombre}" />
-            </p:selectOneMenu>
-        </h:panelGrid>
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel for="nuevoEstado" value="Nuevo Estado:" />
+                        <p:selectOneMenu id="nuevoEstado"
+                                         value="#{reparacionBean.estadoIdSeleccionado}"
+                                         required="true"
+                                         requiredMessage="Debe seleccionar un estado.">
+                            <f:selectItem itemLabel="Seleccione un estado" itemValue="" noSelectionOption="true"/>
+                            <f:selectItems value="#{estadoBean.listaEstados}"
+                                           var="estado"
+                                           itemValue="#{estado.id}"
+                                           itemLabel="#{estado.nombre}" />
+                        </p:selectOneMenu>
+                    </h:panelGrid>
 
-        <p:divider />
+                    <p:divider />
 
-        <div class="flex justify-end gap-4 mt-4">
-            <p:commandButton value="Cancelar" 
-                             onclick="PF('editarEstadoDlg').hide();" 
-                             type="button"
-                             styleClass="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300"/>
-                             
-            <p:commandButton value="Guardar"
-                             actionListener="#{reparacionBean.actualizarEstado}"
-                             update=":formEditarEstado:mensajesEditarEstado :formEditarEstado :formReparaciones:reparacionesTable"
-                             oncomplete="if (!args.validationFailed) PF('editarEstadoDlg').hide();"
-                             process="formEditarEstado"
-                             styleClass="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"/>
-        </div>
-    </h:form>
-</p:dialog>
+                    <div class="flex justify-end gap-4 mt-4">
+                        <p:commandButton value="Cancelar" 
+                                         onclick="PF('editarEstadoDlg').hide();" 
+                                         type="button"
+                                         styleClass="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300"/>
+
+                        <p:commandButton value="Guardar"
+                                         actionListener="#{reparacionBean.actualizarEstado}"
+                                         update=":formEditarEstado:mensajesEditarEstado :formEditarEstado :formReparaciones:reparacionesTable"
+                                         oncomplete="if (!args.validationFailed) PF('editarEstadoDlg').hide();"
+                                         process="formEditarEstado"
+                                         styleClass="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"/>
+                    </div>
+                </h:form>
+            </p:dialog>
 
         </ui:define>
     </ui:composition>
